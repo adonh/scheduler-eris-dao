@@ -33,5 +33,5 @@ trait Dao {
   }
 
   private var _columnFamilyDefs = Set.empty[ColumnFamilyDefinition]
-  private[eris] def columnFamilyDefs: Set[ColumnFamilyDefinition] = _columnFamilyDefs
+  def columnFamilyDefs: Set[ColumnFamilyDefinition] = _columnFamilyDefs
 }
