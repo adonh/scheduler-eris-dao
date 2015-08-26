@@ -34,10 +34,10 @@ trait MapperDao[Id, Entity] extends Dao {
    * Example:
    * {{{
    * def instrument(methodName: String): (Future[T] => Future[T]) = {
-   *   val start = System.currentTimeMillis()
+   *   val start = System.nanoTime()
    *   (future: Future[T]) => {
    *     future.onComplete { _ =>
-   *       val duration = System.currentTimeMillis() - start
+   *       val duration = System.nanoTime() - start
    *       Stats.recordMetrics(methodName, duration)
    *     }
    *     future
