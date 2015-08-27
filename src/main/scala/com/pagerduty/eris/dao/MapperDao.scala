@@ -30,25 +30,6 @@ import com.pagerduty.eris.serializers.ValidatorClass
  */
 trait MapperDao[Id, Entity] extends Dao {
 
-  /**
-   * Example:
-   * {{{
-   * def instrument(methodName: String): (Future[T] => Future[T]) = {
-   *   val start = System.nanoTime()
-   *   (future: Future[T]) => {
-   *     future.onComplete { _ =>
-   *       val duration = System.nanoTime() - start
-   *       Stats.recordMetrics(methodName, duration)
-   *     }
-   *     future
-   *   }
-   * }
-   * }}}
-   */
-  protected def instrument[T](methodName: String): (Future[T] => Future[T]) = {
-    identity
-  }
-
   // Abstract members.
   /**
    * The target entity class
@@ -103,11 +84,10 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return Some(entity) if exists, None otherwise.
    */
   protected def mapperFind(id: Id): Future[Option[Entity]] = {
-    val intercept = instrument[Option[Entity]]("mapperFind")
     val query = keyspace.prepareQuery(mainFamily.columnFamily).getKey(id)
-    intercept(query.executeAsync().map { res =>
+    query.executeAsync().map { res =>
       entityMapper.read(id, res.getResult)
-    })
+    }
   }
 
   /**
@@ -119,7 +99,6 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return a map of ids to entities
    */
   protected def mapperFind(ids: Iterable[Id], batchSize: Option[Int]): Future[Map[Id, Entity]] = {
-    val intercept = instrument[Map[Id, Entity]]("mapperFindBatch")
     val idSeq = ids.toSeq
     val batches = if (batchSize.isDefined) idSeq.grouped(batchSize.get) else Seq(idSeq)
 
@@ -134,9 +113,9 @@ trait MapperDao[Id, Entity] extends Dao {
     }
 
     val init = Future.successful(Map.empty[Id, Entity])
-    intercept(batches.foldLeft(init) { (future, idsBatch) =>
+    batches.foldLeft(init) { (future, idsBatch) =>
       future.flatMap { accum => query(idsBatch).map(entities => accum ++ entities) }
-    })
+    }
   }
 
   /**
@@ -147,11 +126,10 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return unit future
    */
   protected def mapperPersist(id: Id, entity: Entity): Future[Unit] = {
-    val intercept = instrument[Unit]("mapperPersist")
     val mutationBatch = keyspace.prepareMutationBatch()
     val rowMutation = mutationBatch.withRow(mainFamily.columnFamily, id)
     entityMapper.write(id, entity, rowMutation)
-    intercept(mutationBatch.executeAsync().map { _ => Unit })
+    mutationBatch.executeAsync().map { _ => Unit }
   }
 
   /**
@@ -161,9 +139,8 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return unit future
    */
   protected def mapperRemove(id: Id): Future[Unit] = {
-    val intercept = instrument[Unit]("mapperRemove")
     val mutationBatch = keyspace.prepareMutationBatch()
     mutationBatch.deleteRow(Seq(mainFamily.columnFamily), id)
-    intercept(mutationBatch.executeAsync().map { _ => Unit })
+    mutationBatch.executeAsync().map { _ => Unit }
   }
 }

@@ -18,16 +18,6 @@ class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
   val entityClass = classOf[test.TestEntity]
   val mainFamily = entityColumnFamily("testDaoMainCf")()
 
-  def intercepted: Seq[String] = _intercepted
-  def clearIntercepted() = { _intercepted = Seq.empty[String] }
-  private var _intercepted = Seq.empty[String]
-  override protected def instrument[T](methodName: String): (Future[T] => Future[T]) = {
-    future => {
-      _intercepted :+= methodName
-      future
-    }
-  }
-
   def find(id: TimeUuid) = mapperFind(id)
   def find(ids: Iterable[TimeUuid], batchSize: Option[Int]) = mapperFind(ids, batchSize)
   def persist(id: TimeUuid, entity: test.TestEntity) = mapperPersist(id, entity)
@@ -69,9 +59,6 @@ class MapperDaoCrudSpec extends FreeSpec with Matchers with MockFactory {
       wait(dao.find(id)) shouldBe Some(entity)
       wait(dao.remove(id))
       wait(dao.find(id)) shouldBe None
-
-      dao.intercepted shouldBe Seq(
-        "mapperFind", "mapperPersist", "mapperFind", "mapperRemove", "mapperFind")
     }
 
     "find batch correctly" in { dao =>
@@ -79,12 +66,9 @@ class MapperDaoCrudSpec extends FreeSpec with Matchers with MockFactory {
       val entries = data.toMap
       val partial = entries.take(5)
       for ((id, entity) <- entries) wait(dao.persist(id, entity))
-      dao.clearIntercepted()
 
       wait(dao.find(partial.keySet, None)) shouldBe partial
       wait(dao.find(entries.keySet, Some(2))) shouldBe entries
-
-      dao.intercepted shouldBe Seq("mapperFindBatch", "mapperFindBatch")
     }
   }
 }
