@@ -5,7 +5,6 @@ import com.pagerduty.eris.serializers._
 import com.pagerduty.eris.schema.SchemaLoader
 import com.pagerduty.eris.{TimeUuid, TestCluster}
 import java.util.logging.{Level, Logger}
-import org.scalamock.scalatest.MockFactory
 import org.scalatest.{Outcome, Matchers}
 import org.scalatest.fixture.FreeSpec
 import scala.concurrent.duration.Duration
@@ -25,7 +24,7 @@ class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
 }
 
 
-class MapperDaoCrudSpec extends FreeSpec with Matchers with MockFactory {
+class MapperDaoCrudSpec extends FreeSpec with Matchers {
   Logger.getLogger("com.pagerduty.eris.schema.SchemaLoader").setLevel(Level.OFF)
 
   type FixtureParam = TestDao
