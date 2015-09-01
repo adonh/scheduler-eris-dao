@@ -56,7 +56,7 @@ trait MapperDao[Id, Entity] extends Dao {
    * By default, ColValue validator will be set to ValidatorClass[String], event though the
    * declared column value type is Array[Byte].
    */
-  def entityColumnFamily
+  protected def entityColumnFamily
     (name: String, columnFamilySettings: ColumnFamilySettings = new ColumnFamilySettings)
     (columns: ColumnModel*)
     (implicit rowKeySerializer: Serializer[Id])
