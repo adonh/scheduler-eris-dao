@@ -32,6 +32,10 @@ trait Dao {
     model
   }
 
-  private var _columnFamilyDefs = Set.empty[ColumnFamilyDefinition]
+  /**
+   * Returns column family definitions used to build Cassandra schema.
+   * @return column family definitions
+   */
   def columnFamilyDefs: Set[ColumnFamilyDefinition] = _columnFamilyDefs
+  private var _columnFamilyDefs = Set.empty[ColumnFamilyDefinition]
 }
