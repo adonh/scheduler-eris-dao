@@ -98,7 +98,7 @@ trait MapperDao[Id, Entity] extends Dao {
    * @param batchSize maximum number of ids to query at a time
    * @return a map of ids to entities
    */
-  protected def mapperFind(ids: Iterable[Id], batchSize: Int): Future[Map[Id, Entity]] = {
+  protected def mapperFind(ids: Iterable[Id], batchSize: Int = 100): Future[Map[Id, Entity]] = {
     val batches = ids.toSeq.grouped(batchSize)
 
     def query(idSeq: Seq[Id]): Future[Map[Id, Entity]] = {
