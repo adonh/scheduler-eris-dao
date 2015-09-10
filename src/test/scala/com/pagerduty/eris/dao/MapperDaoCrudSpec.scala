@@ -18,7 +18,7 @@ class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
   val mainFamily = entityColumnFamily("testDaoMainCf")()
 
   def find(id: TimeUuid) = mapperFind(id)
-  def find(ids: Iterable[TimeUuid], batchSize: Option[Int]) = mapperFind(ids, batchSize)
+  def find(ids: Iterable[TimeUuid], batchSize: Int) = mapperFind(ids, batchSize)
   def persist(id: TimeUuid, entity: test.TestEntity) = mapperPersist(id, entity)
   def remove(id: TimeUuid) = mapperRemove(id)
 }
@@ -66,8 +66,8 @@ class MapperDaoCrudSpec extends FreeSpec with Matchers {
       val partial = entries.take(5)
       for ((id, entity) <- entries) wait(dao.persist(id, entity))
 
-      wait(dao.find(partial.keySet, None)) shouldBe partial
-      wait(dao.find(entries.keySet, Some(2))) shouldBe entries
+      wait(dao.find(partial.keySet, 100)) shouldBe partial
+      wait(dao.find(entries.keySet, 2)) shouldBe entries
     }
   }
 }
