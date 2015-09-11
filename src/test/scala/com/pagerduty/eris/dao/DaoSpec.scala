@@ -3,7 +3,7 @@ package com.pagerduty.eris.dao
 import java.util.Date
 
 import com.netflix.astyanax.serializers.ComparatorType
-import com.pagerduty.eris.{TimeUuid, ColumnModel, ColumnFamilySettings, TestCluster}
+import com.pagerduty.eris.{TimeUuid, ColumnModel, ColumnFamilySettings, TestClusterCtx}
 import com.pagerduty.eris.serializers._
 import org.scalatest.{FreeSpec, Matchers}
 
@@ -19,7 +19,7 @@ class DaoSpec extends FreeSpec with Matchers {
       val indexColName = "indexCol"
 
       val dao = new Dao {
-        val cluster = TestCluster.cluster
+        val cluster = TestClusterCtx.cluster
         val keyspace = cluster.getKeyspace(keyspaceName)
 
         columnFamily[TimeUuid, Date, String](simpleCfName)

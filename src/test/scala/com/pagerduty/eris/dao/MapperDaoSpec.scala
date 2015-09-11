@@ -1,7 +1,7 @@
 package com.pagerduty.eris.dao
 
 import com.pagerduty.eris.serializers._
-import com.pagerduty.eris.{ColumnFamilySettings, ColumnModel, TimeUuid, TestCluster}
+import com.pagerduty.eris.{ColumnFamilySettings, ColumnModel, TimeUuid, TestClusterCtx}
 import com.pagerduty.mapper.annotations._
 import org.scalatest.{Matchers, FreeSpec}
 
@@ -27,7 +27,7 @@ class MapperDaoSpec extends FreeSpec with Matchers {
       val mainCfName = "mainCf"
 
       trait PartialDaoImpl extends MapperDao[Id, Entity] {
-        val cluster = TestCluster.cluster
+        val cluster = TestClusterCtx.cluster
         val keyspace = cluster.getKeyspace(keyspaceName)
         val entityClass = classOf[Entity]
       }
