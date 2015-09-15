@@ -3,8 +3,7 @@ package com.pagerduty.eris.dao
 import com.netflix.astyanax.{Keyspace, Cluster}
 import com.pagerduty.eris.serializers._
 import com.pagerduty.eris.schema.SchemaLoader
-import com.pagerduty.eris.{TimeUuid, TestClusterCtx}
-import java.util.logging.{Level, Logger}
+import com.pagerduty.eris.{TestLoggingConfig, TimeUuid, TestClusterCtx}
 import org.scalatest.{Outcome, Matchers}
 import org.scalatest.fixture.FreeSpec
 import scala.concurrent.duration.Duration
@@ -25,8 +24,7 @@ class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
 
 
 class MapperDaoCrudSpec extends FreeSpec with Matchers {
-  Logger.getLogger("com.pagerduty.eris.schema.SchemaLoader").setLevel(Level.OFF)
-
+  TestLoggingConfig.setup()
   type FixtureParam = TestDao
 
   override def withFixture(test: OneArgTest): Outcome = {
