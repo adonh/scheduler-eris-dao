@@ -1,0 +1,16 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT" />
+  </root>
+
+  <logger name="com.netflix.astyanax.connectionpool.impl.ConnectionPoolMBeanManager" level="WARN"/>
+  <logger name="com.netflix.astyanax.connectionpool.impl.CountingConnectionPoolMonitor" level="WARN"/>
+  <logger name="com.netflix.astyanax.thrift.ThriftKeyspaceImpl" level="WARN"/>
+  <logger name="com.pagerduty.eris.schema.SchemaLoader" level="ERROR"/>
+</configuration>
