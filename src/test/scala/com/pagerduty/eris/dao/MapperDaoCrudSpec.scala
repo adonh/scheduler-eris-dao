@@ -8,6 +8,7 @@ import org.scalatest.{Outcome, Matchers}
 import org.scalatest.fixture.FreeSpec
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import scala.util.Random
 
 
 class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
@@ -18,6 +19,7 @@ class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
 
   def find(id: TimeUuid) = mapperFind(id)
   def find(ids: Iterable[TimeUuid], batchSize: Int = 100) = mapperFind(ids, batchSize)
+  def resolve(ids: Seq[TimeUuid], batchSize: Int = 100) = mapperResolve(ids, batchSize)
   def persist(id: TimeUuid, entity: test.TestEntity) = mapperPersist(id, entity)
   def remove(id: TimeUuid) = mapperRemove(id)
 }
@@ -65,6 +67,16 @@ class MapperDaoCrudSpec extends FreeSpec with Matchers {
 
       wait(dao.find(partial.keySet)) shouldBe partial
       wait(dao.find(entries.keySet, 2)) shouldBe entries
+    }
+
+    "preserve order with mapperResolve()" in { dao =>
+      val data = for (i <- 0 until 10) yield (TimeUuid(), new test.TestEntity(i.toString(), i))
+      for ((id, entity) <- data) wait(dao.persist(id, entity))
+      val shuffled = new Random().shuffle(data)
+      val ids = shuffled.map(_._1)
+      val entries = shuffled.map(_._2)
+
+      wait(dao.resolve(ids, 2)) shouldBe entries
     }
   }
 }
