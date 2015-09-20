@@ -118,6 +118,18 @@ trait MapperDao[Id, Entity] extends Dao {
   }
 
   /**
+   * Resolves a sequence of ids into a sequence of entities, preserving the order and skipping
+   * entities that cannot be found.
+   *
+   * @param ids a sequence of ids
+   * @param batchSize maximum number of ids to query at a time
+   * @return a sequence of found entities, in the same order as ids
+   */
+  protected def mapperResolve(ids: Seq[Id], batchSize: Int = 100): Future[Seq[Entity]] = {
+    mapperFind(ids).map(res => ids.collect(res))
+  }
+
+  /**
    * Persist a given entity with a given id. Annotated @Id field is ignored.
    *
    * @param id target id
