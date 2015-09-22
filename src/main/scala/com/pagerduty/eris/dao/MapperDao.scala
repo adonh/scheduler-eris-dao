@@ -22,7 +22,8 @@ import com.pagerduty.eris.serializers.ValidatorClass
  *   val mainFamily = entityColumnFamily("myCf")()
  *
  *   def find(id: MyId) = mapperFind(id)
- *   def find(ids: Iterable[MyId], batchSize: Option[Int]) = mapperFind(ids, batchSize)
+ *   def find(ids: Iterable[MyId], batchSize: Int) = mapperFind(ids, batchSize)
+ *   def resolve(ids: Seq[MyId], batchSize: Int) = mapperResolve(ids, batchSize)
  *   def persist(id: MyId, entity: MyEntity) = mapperPersist(id, entity)
  *   def remove(id: MyId) = mapperRemove(id)
  * }
@@ -115,6 +116,18 @@ trait MapperDao[Id, Entity] extends Dao {
     batches.foldLeft(init) { (future, idsBatch) =>
       future.flatMap { accum => query(idsBatch).map(entities => accum ++ entities) }
     }
+  }
+
+  /**
+   * Resolves a sequence of ids into a sequence of entities, preserving the order and skipping
+   * entities that cannot be found.
+   *
+   * @param ids a sequence of ids
+   * @param batchSize maximum number of ids to query at a time
+   * @return a sequence of found entities, in the same order as ids
+   */
+  protected def mapperResolve(ids: Seq[Id], batchSize: Int = 100): Future[Seq[Entity]] = {
+    mapperFind(ids).map(res => ids.collect(res))
   }
 
   /**
