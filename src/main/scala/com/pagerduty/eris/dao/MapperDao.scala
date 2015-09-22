@@ -22,7 +22,8 @@ import com.pagerduty.eris.serializers.ValidatorClass
  *   val mainFamily = entityColumnFamily("myCf")()
  *
  *   def find(id: MyId) = mapperFind(id)
- *   def find(ids: Iterable[MyId], batchSize: Option[Int]) = mapperFind(ids, batchSize)
+ *   def find(ids: Iterable[MyId], batchSize: Int) = mapperFind(ids, batchSize)
+ *   def resolve(ids: Seq[MyId], batchSize: Int) = mapperResolve(ids, batchSize)
  *   def persist(id: MyId, entity: MyEntity) = mapperPersist(id, entity)
  *   def remove(id: MyId) = mapperRemove(id)
  * }
