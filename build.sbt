@@ -14,7 +14,7 @@ fullClasspath in Test ++= update.value.select(configurationFilter("transient"))
 
 libraryDependencies ++= Seq(
   "com.pagerduty" %% "eris-core" % "1.3.0" % "compile->compile;test->test",
-  "com.pagerduty" %% "eris-mapper" % "1.3.0")
+  "com.pagerduty" %% "eris-mapper" % "1.5.0")
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",

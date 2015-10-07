@@ -47,7 +47,6 @@ class MapperDaoCrudSpec extends FreeSpec with Matchers {
 
 
   "When doing CRUD MapperDao should" - {
-
     "persist, find, and remove correctly" in { dao =>
       val id = TimeUuid()
       val entity = test.TestEntity("a", 10)
@@ -77,6 +76,24 @@ class MapperDaoCrudSpec extends FreeSpec with Matchers {
       val entries = shuffled.map(_._2)
 
       wait(dao.resolve(ids, 2)) shouldBe entries
+    }
+
+    "persist and load null fields correctly" in { dao =>
+      val id = TimeUuid()
+      val entity = test.TestEntity(null, 10)
+
+      wait(dao.find(id)) shouldBe None
+      wait(dao.persist(id, entity))
+      wait(dao.find(id)) shouldBe Some(entity.copy(field0 = "default0"))
+    }
+
+    "persist and load fields serialized as empty byte buffer correctly" in { dao =>
+      val id = TimeUuid()
+      val entity = test.TestEntity("", 10)
+
+      wait(dao.find(id)) shouldBe None
+      wait(dao.persist(id, entity))
+      wait(dao.find(id)) shouldBe Some(entity)
     }
   }
 }
