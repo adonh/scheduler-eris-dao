@@ -13,8 +13,8 @@ ivyConfigurations += config("transient").hide
 fullClasspath in Test ++= update.value.select(configurationFilter("transient"))
 
 libraryDependencies ++= Seq(
-  "com.pagerduty" %% "eris-core" % "1.3.0" % "compile->compile;test->test",
-  "com.pagerduty" %% "eris-mapper" % "1.5.0")
+  "com.pagerduty" %% "eris-core" % "1.4.1" % "compile->compile;test->test",
+  "com.pagerduty" %% "eris-mapper" % "1.5.1")
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",
