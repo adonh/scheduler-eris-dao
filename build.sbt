@@ -13,11 +13,12 @@ ivyConfigurations += config("transient").hide
 fullClasspath in Test ++= update.value.select(configurationFilter("transient"))
 
 libraryDependencies ++= Seq(
-  "com.pagerduty" %% "eris-core" % "1.4.1" % "compile->compile;test->test",
+  "com.pagerduty" %% "eris-core" % "1.4.1",
   "com.pagerduty" %% "eris-mapper" % "1.5.1")
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",
+  "com.pagerduty" %% "eris-core" % "1.4.1" % Test classifier "tests",
   "org.scalatest" %% "scalatest" % "2.2.4" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % Test,
   "org.scalacheck" %% "scalacheck" % "1.12.2" % Test)
