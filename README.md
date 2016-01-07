@@ -1,4 +1,4 @@
-# eris-dao
+# eris-dao [![Build Status](https://travis-ci.org/PagerDuty/eris-dao.svg)](https://travis-ci.org/PagerDuty/eris-dao)
 
 This is an open source project!
 
