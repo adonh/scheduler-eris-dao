@@ -1,10 +1,9 @@
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
+
+bintrayOrganization := Some("pagerduty")
+
+bintrayRepository := "oss-maven"
+
+licenses += ("BSD New", url("https://opensource.org/licenses/BSD-3-Clause"))
 
 publishMavenStyle := true
 
