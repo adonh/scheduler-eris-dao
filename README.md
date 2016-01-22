@@ -1,4 +1,4 @@
-# eris-dao [![Build Status](https://travis-ci.org/PagerDuty/eris-dao.svg)](https://travis-ci.org/PagerDuty/eris-dao)
+# eris-dao [![Build Status](https://travis-ci.org/PagerDuty/eris-dao.svg?branch=master)](https://travis-ci.org/PagerDuty/eris-dao/builds)
 
 This is an open source project!
 
@@ -18,7 +18,7 @@ resolvers += "bintray-pagerduty-oss-maven" at "https://dl.bintray.com/pagerduty/
 
 Adding the dependency to your SBT build file:
 ```scala
-libraryDependencies += "com.pagerduty" %% "eris-dao" % "1.6.0"
+libraryDependencies += "com.pagerduty" %% "eris-dao" % "1.6.1"
 ```
 
 ## Contact

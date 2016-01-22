@@ -9,13 +9,6 @@ publishMavenStyle := true
 
 pomExtra := (
   <url>https://github.com/PagerDuty/eris-dao</url>
-  <licenses>
-    <license>
-      <name>BSD New</name>
-      <url>https://opensource.org/licenses/BSD-3-Clause</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
   <scm>
     <url>git@github.com:PagerDuty/eris-dao.git</url>
     <connection>scm:git:git@github.com:PagerDuty/eris-dao.git</connection>
