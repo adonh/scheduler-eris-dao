@@ -15,3 +15,5 @@ cache:
     - ~/.ivy2
   apt: true
 sbt_args: -Dsbt.log.noformat=true -sbt-dir ~/.sbt
+after_success:
+- sh "$TRAVIS_BUILD_DIR/.travis.release.sh"
