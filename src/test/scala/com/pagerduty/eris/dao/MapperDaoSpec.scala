@@ -28,20 +28,18 @@
 package com.pagerduty.eris.dao
 
 import com.pagerduty.eris.serializers._
-import com.pagerduty.eris.{ColumnFamilySettings, ColumnModel, TimeUuid, TestClusterCtx}
+import com.pagerduty.eris.{ ColumnFamilySettings, ColumnModel, TimeUuid, TestClusterCtx }
 import com.pagerduty.mapper.annotations._
-import org.scalatest.{Matchers, FreeSpec}
-
+import org.scalatest.{ Matchers, FreeSpec }
 
 package test {
   @Entity case class TestEntity(
       @Column(name = "f0") field0: String,
-      @Column(name = "f1") field1: Int)
-  {
+      @Column(name = "f1") field1: Int
+  ) {
     def this() = this("default0", 0)
   }
 }
-
 
 class MapperDaoSpec extends FreeSpec with Matchers {
 
@@ -80,8 +78,8 @@ class MapperDaoSpec extends FreeSpec with Matchers {
       "with custom colValueValidator in settings" in {
         val dao = new PartialDaoImpl {
           val mainFamily = entityColumnFamily(mainCfName, new ColumnFamilySettings(
-            colValueValidatorOverride = Some(ValidatorClass[Int]))
-          )()
+            colValueValidatorOverride = Some(ValidatorClass[Int])
+          ))()
         }
 
         dao.columnFamilyDefs.size shouldBe 1
