@@ -27,20 +27,18 @@
 
 package com.pagerduty.eris.dao
 
-import com.netflix.astyanax.{Keyspace, Cluster}
+import com.netflix.astyanax.{ Keyspace, Cluster }
 import com.pagerduty.eris.serializers._
 import com.pagerduty.eris.schema.SchemaLoader
-import com.pagerduty.eris.{TimeUuid, TestClusterCtx}
-import org.scalatest.{Outcome, Matchers}
+import com.pagerduty.eris.{ TimeUuid, TestClusterCtx }
+import org.scalatest.{ Outcome, Matchers }
 import org.scalatest.fixture.FreeSpec
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.util.Random
 
-
 class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
-  extends MapperDao[TimeUuid, test.TestEntity]
-{
+    extends MapperDao[TimeUuid, test.TestEntity] {
   val entityClass = classOf[test.TestEntity]
   val mainFamily = entityColumnFamily("testDaoMainCf")()
 
@@ -50,7 +48,6 @@ class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
   def persist(id: TimeUuid, entity: test.TestEntity) = mapperPersist(id, entity)
   def remove(id: TimeUuid) = mapperRemove(id)
 }
-
 
 class MapperDaoCrudSpec extends FreeSpec with Matchers {
   type FixtureParam = TestDao
@@ -64,14 +61,12 @@ class MapperDaoCrudSpec extends FreeSpec with Matchers {
     try {
       schemaLoader.loadSchema()
       withFixture(test.toNoArgTest(dao))
-    }
-    finally {
+    } finally {
       schemaLoader.dropSchema()
     }
   }
 
   def wait[T](future: Future[T]): T = Await.result(future, Duration.Inf)
-
 
   "When doing CRUD MapperDao should" - {
     "persist, find, and remove correctly" in { dao =>

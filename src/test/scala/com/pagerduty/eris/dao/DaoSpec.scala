@@ -30,10 +30,9 @@ package com.pagerduty.eris.dao
 import java.util.Date
 
 import com.netflix.astyanax.serializers.ComparatorType
-import com.pagerduty.eris.{TimeUuid, ColumnModel, ColumnFamilySettings, TestClusterCtx}
+import com.pagerduty.eris.{ TimeUuid, ColumnModel, ColumnFamilySettings, TestClusterCtx }
 import com.pagerduty.eris.serializers._
-import org.scalatest.{FreeSpec, Matchers}
-
+import org.scalatest.{ FreeSpec, Matchers }
 
 class DaoSpec extends FreeSpec with Matchers {
 
@@ -50,10 +49,13 @@ class DaoSpec extends FreeSpec with Matchers {
         val keyspace = cluster.getKeyspace(keyspaceName)
 
         columnFamily[TimeUuid, Date, String](simpleCfName)
-        columnFamily[String, Int, String](indexedCfName,
-          columns = Set(ColumnModel[Boolean](indexColName, indexed = true)))
+        columnFamily[String, Int, String](
+          indexedCfName,
+          columns = Set(ColumnModel[Boolean](indexColName, indexed = true))
+        )
         columnFamily[String, String, Long](counterCfName, new ColumnFamilySettings(
-          colValueValidatorOverride = Some(ComparatorType.COUNTERTYPE.getClassName)))
+          colValueValidatorOverride = Some(ComparatorType.COUNTERTYPE.getClassName)
+        ))
       }
 
       dao.columnFamilyDefs.size shouldBe 3
