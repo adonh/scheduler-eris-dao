@@ -37,7 +37,6 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.pagerduty.eris.serializers.ValidatorClass
 
-
 /**
  * MapperDao provides basic CRUD method for a target entity class.
  *
@@ -84,11 +83,7 @@ trait MapperDao[Id, Entity] extends Dao {
    * By default, ColValue validator will be set to ValidatorClass[String], event though the
    * declared column value type is Array[Byte].
    */
-  protected def entityColumnFamily
-    (name: String, columnFamilySettings: ColumnFamilySettings = new ColumnFamilySettings)
-    (columns: ColumnModel*)
-    (implicit rowKeySerializer: Serializer[Id])
-  : ColumnFamilyModel[Id, String, Array[Byte]] = {
+  protected def entityColumnFamily(name: String, columnFamilySettings: ColumnFamilySettings = new ColumnFamilySettings)(columns: ColumnModel*)(implicit rowKeySerializer: Serializer[Id]): ColumnFamilyModel[Id, String, Array[Byte]] = {
     val defaultValueValidatorClass = columnFamilySettings
       .colValueValidatorOverride.getOrElse(ValidatorClass[String])
 
@@ -97,12 +92,13 @@ trait MapperDao[Id, Entity] extends Dao {
 
     val colsByName =
       reflectionCols.map(col => col.name -> col).toMap ++
-      columns.map(col => col.name -> col).toMap // Override with user specified values.
+        columns.map(col => col.name -> col).toMap // Override with user specified values.
 
     columnFamily[Id, String, Array[Byte]](
       name,
       columnFamilySettings.copy(colValueValidatorOverride = Some(defaultValueValidatorClass)),
-      colsByName.values.toSet)
+      colsByName.values.toSet
+    )
   }
 
   /**
