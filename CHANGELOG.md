@@ -1,3 +1,8 @@
+1.7.0
+========
+
+  * Added a test for migrations where an `@Entity`'s `@Id` field has a `@Column` annotation added / removed
+
 1.6.1
 ========
 
