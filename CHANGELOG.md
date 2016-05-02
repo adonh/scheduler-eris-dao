@@ -1,3 +1,8 @@
+1.7.1
+========
+
+  * Add DaoFixture to test package.
+
 1.7.0
 ========
 
