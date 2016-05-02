@@ -4,6 +4,8 @@ name := "eris-dao"
 
 scalaVersion := "2.10.4"
 
+publishArtifact in Test := true
+
 resolvers += "bintray-pagerduty-oss-maven" at "https://dl.bintray.com/pagerduty/oss-maven"
 
 // Prevents logging configuration from being included in the test jar.
