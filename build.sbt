@@ -4,6 +4,8 @@ name := "eris-dao"
 
 scalaVersion := "2.10.4"
 
+crossScalaVersions := Seq("2.10.4", "2.11.7")
+
 publishArtifact in Test := true
 
 resolvers += "bintray-pagerduty-oss-maven" at "https://dl.bintray.com/pagerduty/oss-maven"
