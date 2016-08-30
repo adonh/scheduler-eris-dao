@@ -34,7 +34,6 @@ import com.pagerduty.eris.serializers._
 import FutureConversions._
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.pagerduty.eris.serializers.ValidatorClass
 
 /**
@@ -83,7 +82,12 @@ trait MapperDao[Id, Entity] extends Dao {
    * By default, ColValue validator will be set to ValidatorClass[String], event though the
    * declared column value type is Array[Byte].
    */
-  protected def entityColumnFamily(name: String, columnFamilySettings: ColumnFamilySettings = new ColumnFamilySettings)(columns: ColumnModel*)(implicit rowKeySerializer: Serializer[Id]): ColumnFamilyModel[Id, String, Array[Byte]] = {
+  protected def entityColumnFamily(
+    name: String, columnFamilySettings: ColumnFamilySettings = new ColumnFamilySettings
+  )(columns: ColumnModel*)(
+    implicit
+    rowKeySerializer: Serializer[Id]
+  ): ColumnFamilyModel[Id, String, Array[Byte]] = {
     val defaultValueValidatorClass = columnFamilySettings
       .colValueValidatorOverride.getOrElse(ValidatorClass[String])
 
@@ -108,10 +112,13 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return Some(entity) if exists, None otherwise.
    */
   protected def mapperFind(id: Id): Future[Option[Entity]] = {
-    val query = keyspace.prepareQuery(mainFamily.columnFamily).getKey(id)
-    query.executeAsync().map { res =>
-      entityMapper.read(id, res.getResult)
-    }
+    val stopwatch = Stopwatch.start()
+    val result = doMapperFind(id)
+    val decorated = Interceptor.decorate(
+      mainFamily.name, "entity_find_one", QueryType.Read, settings.metrics
+    )(stopwatch, result)
+
+    decorated
   }
 
   /**
@@ -123,22 +130,13 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return a map of ids to entities
    */
   protected def mapperFind(ids: Iterable[Id], batchSize: Int = 100): Future[Map[Id, Entity]] = {
-    val batches = ids.toSeq.grouped(batchSize)
+    val stopwatch = Stopwatch.start()
+    val result = doMapperFind(ids, batchSize)
+    val decorated = Interceptor.decorate(
+      mainFamily.name, "entity_find_batch", QueryType.Read, settings.metrics
+    )(stopwatch, result)
 
-    def query(idSeq: Seq[Id]): Future[Map[Id, Entity]] = {
-      val query = keyspace.prepareQuery(mainFamily.columnFamily).getKeySlice(idSeq)
-      query.executeAsync().map { res =>
-        val loaded = for (row <- res.getResult) yield {
-          row.getKey -> entityMapper.read(row.getKey, row.getColumns)
-        }
-        loaded.collect { case (id, Some(entity)) => id -> entity }.toMap
-      }
-    }
-
-    val init = Future.successful(Map.empty[Id, Entity])
-    batches.foldLeft(init) { (future, idsBatch) =>
-      future.flatMap { accum => query(idsBatch).map(entities => accum ++ entities) }
-    }
+    decorated
   }
 
   /**
@@ -161,10 +159,13 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return unit future
    */
   protected def mapperPersist(id: Id, entity: Entity): Future[Unit] = {
-    val mutationBatch = keyspace.prepareMutationBatch()
-    val rowMutation = mutationBatch.withRow(mainFamily.columnFamily, id)
-    entityMapper.write(id, entity, rowMutation)
-    mutationBatch.executeAsync().map { _ => Unit }
+    val stopwatch = Stopwatch.start()
+    val result = doMapperPersist(id, entity)
+    val decorated = Interceptor.decorate(
+      mainFamily.name, "entity_persist", QueryType.Write, settings.metrics
+    )(stopwatch, result)
+
+    decorated
   }
 
   /**
@@ -174,6 +175,49 @@ trait MapperDao[Id, Entity] extends Dao {
    * @return unit future
    */
   protected def mapperRemove(id: Id): Future[Unit] = {
+    val stopwatch = Stopwatch.start()
+    val result = doMapperRemove(id)
+    val decorated = Interceptor.decorate(
+      mainFamily.name, "delete_row", QueryType.Write, settings.metrics
+    )(stopwatch, result)
+
+    decorated
+  }
+
+  private def doMapperFind(id: Id): Future[Option[Entity]] = {
+    val query = keyspace.prepareQuery(mainFamily.columnFamily).getKey(id)
+    query.executeAsync().map { res =>
+      entityMapper.read(id, res.getResult)
+    }
+  }
+
+  private def doMapperFind(ids: Iterable[Id], batchSize: Int = 100): Future[Map[Id, Entity]] = {
+    val batches = ids.toSeq.grouped(batchSize)
+
+    def query(idSeq: Seq[Id]): Future[Map[Id, Entity]] = {
+      val query = keyspace.prepareQuery(mainFamily.columnFamily).getKeySlice(idSeq)
+      query.executeAsync().map { res =>
+        val loaded = for (row <- res.getResult) yield {
+          row.getKey -> entityMapper.read(row.getKey, row.getColumns)
+        }
+        loaded.collect { case (id, Some(entity)) => id -> entity }.toMap
+      }
+    }
+
+    val init = Future.successful(Map.empty[Id, Entity])
+    batches.foldLeft(init) { (future, idsBatch) =>
+      future.flatMap { accum => query(idsBatch).map(entities => accum ++ entities) }
+    }
+  }
+
+  private def doMapperPersist(id: Id, entity: Entity): Future[Unit] = {
+    val mutationBatch = keyspace.prepareMutationBatch()
+    val rowMutation = mutationBatch.withRow(mainFamily.columnFamily, id)
+    entityMapper.write(id, entity, rowMutation)
+    mutationBatch.executeAsync().map { _ => Unit }
+  }
+
+  private def doMapperRemove(id: Id): Future[Unit] = {
     val mutationBatch = keyspace.prepareMutationBatch()
     mutationBatch.deleteRow(Seq(mainFamily.columnFamily), id)
     mutationBatch.executeAsync().map { _ => Unit }

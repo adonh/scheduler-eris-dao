@@ -30,6 +30,7 @@ package com.pagerduty.eris.dao
 import com.netflix.astyanax.ddl.ColumnFamilyDefinition
 import com.netflix.astyanax.{ Cluster, Keyspace, Serializer }
 import com.pagerduty.eris._
+import scala.concurrent.ExecutionContextExecutor
 
 /**
  * Base of DAO hierarchy, contains methods to define schema and integrate with the
@@ -38,6 +39,13 @@ import com.pagerduty.eris._
 trait Dao {
   protected val cluster: Cluster
   protected val keyspace: Keyspace
+
+  /**
+   * Custom config that will be combined with reasonable fallbacks.
+   *
+   * @return config
+   */
+  protected def settings: ErisSettings = new ErisSettings
 
   /**
    * Creates column family model and retains related schema.
@@ -64,4 +72,47 @@ trait Dao {
    */
   def columnFamilyDefs: Set[ColumnFamilyDefinition] = _columnFamilyDefs
   private var _columnFamilyDefs = Set.empty[ColumnFamilyDefinition]
+
+  /**
+   * Shared executor that will be used when working with Futures.
+   *
+   * @return executor
+   */
+  protected implicit def executor: ExecutionContextExecutor
+
+  /**
+   * Implements basic WideRowIndex.
+   */
+  class WideRowIndex[RowKey, ColName, ColValue](
+    val columnFamilyModel: ColumnFamilyModel[RowKey, ColName, ColValue],
+    pageSize: Int = 100
+  )
+      extends com.pagerduty.widerow.WideRowIndex[RowKey, ColName, ColValue](
+        new WideRowDriverWithMetrics(columnFamilyModel, executor, settings),
+        pageSize
+      )
+
+  /**
+   * Implements basic WideRowMap.
+   */
+  class WideRowMap[RowKey, ColName, ColValue](
+    val columnFamilyModel: ColumnFamilyModel[RowKey, ColName, ColValue],
+    pageSize: Int = 100
+  )
+      extends com.pagerduty.widerow.WideRowMap[RowKey, ColName, ColValue](
+        new WideRowDriverWithMetrics(columnFamilyModel, executor, settings),
+        pageSize
+      )
+
+  /**
+   * Implements basic WideRowSet.
+   */
+  class WideRowSet[RowKey, ColName](
+    val columnFamilyModel: ColumnFamilyModel[RowKey, ColName, Array[Byte]],
+    pageSize: Int = 100
+  )
+      extends com.pagerduty.widerow.WideRowSet[RowKey, ColName](
+        new WideRowDriverWithMetrics(columnFamilyModel, executor, settings),
+        pageSize
+      )
 }

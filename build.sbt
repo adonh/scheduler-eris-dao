@@ -20,18 +20,19 @@ ivyConfigurations += config("transient").hide
 fullClasspath in Test ++= update.value.select(configurationFilter("transient"))
 
 lazy val root = (project in file(".")).
-  configs(IntegrationTest extend (Test)).
+  configs(IntegrationTest extend Test).
   settings(Defaults.itSettings: _*).
   settings(
+    libraryDependencies ++= Seq(
+      "com.pagerduty" %% "eris-core" % "1.5.1",
+      "com.pagerduty" %% "eris-mapper" % "1.6.1",
+      "com.pagerduty" %% "eris-widerow" % "1.4.1",
+      "com.pagerduty" %% "metrics-api" % "1.1.0"),
 
-  libraryDependencies ++= Seq(
-    "com.pagerduty" %% "eris-core" % "1.5.1",
-    "com.pagerduty" %% "eris-mapper" % "1.6.1"),
-
-  libraryDependencies ++= Seq(
-    "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",
-    "com.pagerduty" %% "eris-core" % "1.5.1" % Test classifier "tests",
-    "org.scalatest" %% "scalatest" % "2.2.4" % "it,test",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "it,test",
-    "org.scalacheck" %% "scalacheck" % "1.12.2" % "it,test")
+    libraryDependencies ++= Seq(
+      "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",
+      "com.pagerduty" %% "eris-core" % "1.5.1" % Test classifier "tests",
+      "org.scalatest" %% "scalatest" % "2.2.4" % "it,test",
+      "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "it,test",
+      "org.scalacheck" %% "scalacheck" % "1.12.2" % "it,test")
   )
