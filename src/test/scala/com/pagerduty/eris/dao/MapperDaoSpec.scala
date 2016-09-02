@@ -31,6 +31,7 @@ import com.pagerduty.eris.serializers._
 import com.pagerduty.eris.{ ColumnFamilySettings, ColumnModel, TimeUuid, TestClusterCtx }
 import com.pagerduty.mapper.annotations._
 import org.scalatest.{ Matchers, FreeSpec }
+import scala.concurrent.ExecutionContextExecutor
 
 package test {
   @Entity case class TestEntity(
@@ -59,6 +60,7 @@ class MapperDaoSpec extends FreeSpec with Matchers {
 
       "simple case" in {
         val dao = new PartialDaoImpl {
+          protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
           val mainFamily = entityColumnFamily(mainCfName)()
         }
 
@@ -77,6 +79,7 @@ class MapperDaoSpec extends FreeSpec with Matchers {
 
       "with custom colValueValidator in settings" in {
         val dao = new PartialDaoImpl {
+          protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
           val mainFamily = entityColumnFamily(mainCfName, new ColumnFamilySettings(
             colValueValidatorOverride = Some(ValidatorClass[Int])
           ))()
@@ -97,6 +100,7 @@ class MapperDaoSpec extends FreeSpec with Matchers {
 
       "with user specified columns" in {
         val dao = new PartialDaoImpl {
+          protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
           val mainFamily = entityColumnFamily(mainCfName)(ColumnModel[BigInt]("f1"))
         }
 
@@ -109,6 +113,7 @@ class MapperDaoSpec extends FreeSpec with Matchers {
       "multiple calls" in {
         val anotherColFamilyName = "anotherCf"
         val dao = new PartialDaoImpl {
+          protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
           val mainFamily = entityColumnFamily(mainCfName)()
           entityColumnFamily(anotherColFamilyName)()
         }

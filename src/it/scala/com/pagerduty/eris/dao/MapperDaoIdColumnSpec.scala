@@ -35,7 +35,7 @@ import com.pagerduty.mapper.annotations._
 import org.scalatest.{ Outcome, Matchers }
 import org.scalatest.fixture.FreeSpec
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ExecutionContextExecutor, Await, Future}
 import scala.util.Random
 
 object MapperDaoIdColumnSpec {
@@ -48,6 +48,7 @@ object MapperDaoIdColumnSpec {
   }
   class TestDaoIdNotColumn(protected val cluster: Cluster, protected val keyspace: Keyspace)
       extends MapperDao[TimeUuid, TestEntityIdNotColumn] {
+    protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
     val entityClass = classOf[TestEntityIdNotColumn]
     val mainFamily = entityColumnFamily("testIdColumnDaoMainCf")()
 
@@ -65,6 +66,7 @@ object MapperDaoIdColumnSpec {
   }
   class TestDaoIdAlsoColumn(protected val cluster: Cluster, protected val keyspace: Keyspace)
       extends MapperDao[TimeUuid, TestEntityIdAlsoColumn] {
+    protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
     val entityClass = classOf[TestEntityIdAlsoColumn]
     val mainFamily = entityColumnFamily("testIdColumnDaoMainCf")()
 

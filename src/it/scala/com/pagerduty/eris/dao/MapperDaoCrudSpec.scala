@@ -34,11 +34,12 @@ import com.pagerduty.eris.{ TimeUuid, TestClusterCtx }
 import org.scalatest.{ Outcome, Matchers }
 import org.scalatest.fixture.FreeSpec
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{ExecutionContextExecutor, Await, Future}
 import scala.util.Random
 
 class TestDao(protected val cluster: Cluster, protected val keyspace: Keyspace)
     extends MapperDao[TimeUuid, test.TestEntity] {
+  protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
   val entityClass = classOf[test.TestEntity]
   val mainFamily = entityColumnFamily("testDaoMainCf")()
 

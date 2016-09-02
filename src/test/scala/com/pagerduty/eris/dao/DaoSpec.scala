@@ -33,6 +33,7 @@ import com.netflix.astyanax.serializers.ComparatorType
 import com.pagerduty.eris.{ TimeUuid, ColumnModel, ColumnFamilySettings, TestClusterCtx }
 import com.pagerduty.eris.serializers._
 import org.scalatest.{ FreeSpec, Matchers }
+import scala.concurrent.ExecutionContextExecutor
 
 class DaoSpec extends FreeSpec with Matchers {
 
@@ -47,6 +48,7 @@ class DaoSpec extends FreeSpec with Matchers {
       val dao = new Dao {
         val cluster = TestClusterCtx.cluster
         val keyspace = cluster.getKeyspace(keyspaceName)
+        protected def executor: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
 
         columnFamily[TimeUuid, Date, String](simpleCfName)
         columnFamily[String, Int, String](
