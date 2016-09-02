@@ -27,7 +27,7 @@ lazy val root = (project in file(".")).
       "com.pagerduty" %% "eris-core" % "1.5.1",
       "com.pagerduty" %% "eris-mapper" % "1.6.1",
       "com.pagerduty" %% "eris-widerow" % "1.4.1",
-      "com.pagerduty" %% "metrics-api" % "1.1.0"),
+      "com.pagerduty" %% "metrics-api" % "1.2.1"),
 
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",

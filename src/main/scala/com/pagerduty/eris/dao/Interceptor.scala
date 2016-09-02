@@ -1,6 +1,6 @@
 package com.pagerduty.eris.dao
 
-import com.pagerduty.metrics.Metrics
+import com.pagerduty.metrics.{ Metrics, Stopwatch }
 import scala.concurrent.Future
 import scala.util.{ Failure, Success }
 

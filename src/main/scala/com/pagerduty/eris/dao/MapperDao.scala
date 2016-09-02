@@ -31,6 +31,7 @@ import com.netflix.astyanax.Serializer
 import com.pagerduty.eris._
 import com.pagerduty.eris.mapper.EntityMapper
 import com.pagerduty.eris.serializers._
+import com.pagerduty.metrics.Stopwatch
 import FutureConversions._
 import scala.collection.JavaConversions._
 import scala.concurrent.Future

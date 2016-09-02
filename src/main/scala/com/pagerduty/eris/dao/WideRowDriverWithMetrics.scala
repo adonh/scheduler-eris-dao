@@ -3,6 +3,7 @@ package com.pagerduty.eris.dao
 import com.pagerduty.eris.ColumnFamilyModel
 import com.pagerduty.eris.widerow.WideRowDriverImpl
 import com.pagerduty.widerow.{ Entry, EntryColumn }
+import com.pagerduty.metrics.Stopwatch
 import scala.concurrent.{ Future, ExecutionContextExecutor }
 
 class WideRowDriverWithMetrics[RowKey, ColName, ColValue](

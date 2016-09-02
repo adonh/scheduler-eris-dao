@@ -1,6 +1,6 @@
 package com.pagerduty.eris.dao
 
-import com.pagerduty.metrics.NullMetrics
+import com.pagerduty.metrics.{ NullMetrics, Stopwatch }
 import org.scalatest.{ FreeSpec, Matchers }
 import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
