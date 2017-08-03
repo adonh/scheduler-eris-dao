@@ -8,7 +8,7 @@ import com.pagerduty.eris.ClusterCtx
 import com.pagerduty.eris.schema.SchemaLoader
 import org.scalatest.{ Outcome, fixture }
 
-trait DaoFixture { this: fixture.Suite =>
+trait DaoFixture { this: fixture.TestSuite =>
   type FixtureParam <: Dao
   protected def mkFixtureDao(cluster: Cluster, keyspace: Keyspace): FixtureParam
 

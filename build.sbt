@@ -32,7 +32,7 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",
       "com.pagerduty" %% "eris-core" % "1.5.1" % Test classifier "tests",
-      "org.scalatest" %% "scalatest" % "2.2.4" % "it,test",
-      "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "it,test",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "it,test",
+      "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % "it,test",
       "org.scalacheck" %% "scalacheck" % "1.12.2" % "it,test")
   )
