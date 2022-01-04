@@ -2,9 +2,9 @@ organization := "com.pagerduty"
 
 name := "eris-dao"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.12"
 
-crossScalaVersions := Seq("2.10.4", "2.11.7")
+crossScalaVersions := Seq("2.10.4", "2.11.12")
 
 publishArtifact in Test := true
 
@@ -24,14 +24,14 @@ lazy val root = (project in file(".")).
   settings(Defaults.itSettings: _*).
   settings(
     libraryDependencies ++= Seq(
-      "com.pagerduty" %% "eris-core" % "1.5.1",
-      "com.pagerduty" %% "eris-mapper" % "1.6.1",
-      "com.pagerduty" %% "eris-widerow" % "1.4.1",
-      "com.pagerduty" %% "metrics-api" % "1.2.1"),
+      "com.pagerduty" %% "eris-core" % "3.0.1",
+      "com.pagerduty" %% "eris-mapper" % "2.0.1",
+      "com.pagerduty" %% "eris-widerow" % "1.4.3",
+      "com.pagerduty" %% "metrics-api" % "2.1.5"),
 
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.0.13" % "transient",
-      "com.pagerduty" %% "eris-core" % "1.5.1" % Test classifier "tests",
+      "com.pagerduty" %% "eris-core-tests" % "3.0.1" % Test,
       "org.scalatest" %% "scalatest" % "3.0.1" % "it,test",
       "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % "it,test",
       "org.scalacheck" %% "scalacheck" % "1.12.2" % "it,test")
